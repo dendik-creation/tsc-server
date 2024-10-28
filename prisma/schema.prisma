@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Chat {
+  id          Int       @id @default(autoincrement())
+  senderId    Int?      @map("sender_id")
+  receiverId  Int?      @map("receiver_id")
+  messageText String    @map("message_text")
+  chatFileId  Int?      @unique
+  isSeen      Boolean   @default(false) @map("is_seen")
+  replyTo     Int?
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  sender   User?     @relation("ChatSender", fields: [senderId], references: [id], onDelete: SetNull)
+  receiver User?     @relation("ChatReceiver", fields: [receiverId], references: [id], onDelete: SetNull)
+  chatFile ChatFile? @relation("ChatFile", fields: [chatFileId], references: [id], onDelete: SetNull)
+
+  reply   Chat?  @relation("Replies", fields: [replyTo], references: [id], onDelete: SetNull)
+  replies Chat[] @relation("Replies")
+}
+
+model ChatFile {
+  id        Int       @id @default(autoincrement())
+  fileName  String    @map("file_name")
+  filePath  String    @map("file_path")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  chat Chat? @relation("ChatFile")
+}
+
+model ChatRequest {
+  id          Int       @id @default(autoincrement())
+  requesterId Int?      @unique
+  receiverId  Int?      @unique
+  status      String    @default("pending")
+  acceptedAt  DateTime? @map("accepted_at")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  requester User? @relation("ChatRequesterRequest", fields: [requesterId], references: [id], onDelete: SetNull)
+  receiver  User? @relation("ChatReceiverRequest", fields: [receiverId], references: [id], onDelete: SetNull)
+}
+
+model DocumentReference {
+  id              Int       @id @default(autoincrement())
+  documentName    String    @map("document_name")
+  allowedFileType Json      @map("allowed_file_type")
+  createdAt       DateTime? @default(now()) @map("created_at")
+  updatedAt       DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  madrasahDocument MadrasahDocument[] @relation("DocumentReference")
+}
+
+model KepalaMadrasah {
+  id          Int       @id @default(autoincrement())
+  madrasahId  Int?      @unique
+  nip         String    @unique
+  name        String
+  bornPlace   String    @map("born_place")
+  bornDate    DateTime  @map("born_date")
+  education   String
+  major       String
+  nuptk       String
+  tmt         DateTime
+  homeAddress String    @map("home_address")
+  email       String
+  phone       String
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  madrasah Madrasah? @relation("KepalaMadrasah", fields: [madrasahId], references: [id], onDelete: Cascade)
+}
+
+model Madrasah {
+  id                  Int       @id @default(autoincrement())
+  pengawasId          Int?      @map("pengawas_id")
+  MadrasahOperatorId  Int?      @unique @map("madrasah_operator_id")
+  npsn                String    @unique
+  name                String
+  category            String
+  madrasahStatus      String    @map("madrasah_status")
+  accreditationStatus String    @map("accreditation_status")
+  accreditationYear   String    @map("accreditation_year")
+  address             String
+  email               String    @unique
+  phone               String
+  province            String
+  city                String
+  district            String
+  village             String
+  createdAt           DateTime? @default(now()) @map("created_at")
+  updatedAt           DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  pengawas         User?              @relation("PengawasMadrasah", fields: [pengawasId], references: [id], onDelete: Cascade)
+  madrasahOperator User?              @relation("MadrasahOperator", fields: [MadrasahOperatorId], references: [id], onDelete: Cascade)
+  kepalaMadrasah   KepalaMadrasah?    @relation("KepalaMadrasah")
+  madrasahDocuents MadrasahDocument[] @relation("MadrasahDocuments")
+  staffGuru        StaffGuru[]        @relation("StaffGuru")
+  studentCount     StudentCount[]     @relation("StudentCount")
+}
+
+model MadrasahDocument {
+  id                  Int       @id @default(autoincrement())
+  madrasahId          Int?
+  documentUrl         String    @map("document_url")
+  documentReferenceId Int?
+  createdAt           DateTime? @default(now()) @map("created_at")
+  updatedAt           DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  madrasah          Madrasah?          @relation("MadrasahDocuments", fields: [madrasahId], references: [id], onDelete: SetNull)
+  documentReference DocumentReference? @relation("DocumentReference", fields: [documentReferenceId], references: [id], onDelete: SetNull)
+}
+
+model StaffGuru {
+  id          Int               @id @default(autoincrement())
+  madrasahId  Int?
+  nip         String            @unique
+  name        String
+  position    String
+  category    StaffGuruCategory
+  bornPlace   String            @map("born_place")
+  bornDate    DateTime          @map("born_date")
+  tmt         DateTime
+  gender      String
+  workStatus  String            @map("work_status")
+  isPns       Boolean?          @default(false) @map("is_pns")
+  isCertified Boolean           @default(false) @map("is_certified")
+  education   String?
+  yearAdded   String            @map("year_added")
+  exitReason  String?           @map("exit_reason")
+  createdAt   DateTime?         @default(now()) @map("created_at")
+  updatedAt   DateTime?         @default(now()) @updatedAt @map("updated_at")
+
+  madrasah Madrasah? @relation("StaffGuru", fields: [madrasahId], references: [id], onDelete: Cascade)
+}
+
+enum StaffGuruCategory {
+  GURU
+  TENDIK
+}
+
+model StudentCount {
+  id           Int       @id @default(autoincrement())
+  madrasahId   Int?
+  grade        String
+  rombel       Int
+  male         Int
+  female       Int
+  totalStudent Int       @map("total_student")
+  yearAdded    String    @map("year_added")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  madrasah Madrasah? @relation("StudentCount", fields: [madrasahId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  fullName  String?   @map("full_name")
+  role      UserRole
+  password  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  pengawasMadrasah     Madrasah[]   @relation("PengawasMadrasah")
+  madrasahOperator     Madrasah?    @relation("MadrasahOperator")
+  chatRequesterRequest ChatRequest? @relation("ChatRequesterRequest")
+  chatReceiverRequest  ChatRequest? @relation("ChatReceiverRequest")
+  chatSender           Chat[]       @relation("ChatSender")
+  chatReceiver         Chat[]       @relation("ChatReceiver")
+  sessions             Session[]    @relation("UserSessions")
+}
+
+enum UserRole {
+  SUPERUSER
+  PENGAWAS
+  MADRASAH
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  expiresAt DateTime
+
+  user User @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
+}
