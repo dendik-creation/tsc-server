@@ -12,10 +12,22 @@ import {
 import Link from "next/link";
 import { userNavs } from "./partials/userNavs";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getUserSession } from "@/services/auth/session";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const items = userNavs("SUPERUSER");
+  const [userRole, setUserRole] = useState<string>("");
+
+  useEffect(() => {
+    const getUserRole = async () => {
+      const userData = await getUserSession();
+      setUserRole(userData?.userRole || "");
+    };
+
+    getUserRole();
+  }, []);
+  const items = userNavs(userRole);
   return (
     <Sidebar>
       <SidebarContent className="bg-gray-800">
