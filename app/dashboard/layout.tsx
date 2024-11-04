@@ -15,7 +15,7 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="m-4 w-full">
+      <main className="m-6 w-full">
         <Header classNames="mb-8" />
         {children}
       </main>

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.user.deleteMany();
-  const hashedPassword = await bcrypt.hash("password123", 10);
+  const hashedPassword = await bcrypt.hash("12345", 10);
 
   await prisma.user.createMany({
     data: [
@@ -13,6 +13,7 @@ async function main() {
         username: "superuser1",
         fullName: "Super User 1",
         role: "SUPERUSER",
+        firstPassword: "12345",
         password: hashedPassword,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -21,6 +22,7 @@ async function main() {
         username: "pengawas1",
         fullName: "Pengawas 1",
         role: "PENGAWAS",
+        firstPassword: "12345",
         password: hashedPassword,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -29,6 +31,7 @@ async function main() {
         username: "madrasah1",
         fullName: "Madrasah 1",
         role: "MADRASAH",
+        firstPassword: "12345",
         password: hashedPassword,
         createdAt: new Date(),
         updatedAt: new Date(),

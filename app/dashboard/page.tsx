@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getUserSession } from "@/services/auth/session";
+import { getUserSession } from "@/services/auth/service";
 
 export default function DashboardIndex() {
   const router = useRouter();
