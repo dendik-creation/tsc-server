@@ -1,38 +1,25 @@
-"use client";
+import { redirect } from "next/navigation";
+import { getUserSession } from "@/services/auth/service";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getUserSession } from "@/services/auth/session";
+export default async function IndexPage() {
+  const userData = await getUserSession();
 
-export default function IndexPage() {
-  const router = useRouter();
-  const [userRole, setUserRole] = useState<string>("");
+  const userRole = userData?.userRole || "";
 
-  useEffect(() => {
-    const getUserRole = async () => {
-      const userData = await getUserSession();
-      setUserRole(userData?.userRole || "");
-    };
-
-    getUserRole();
-  }, []);
-
-  useEffect(() => {
-    switch (userRole) {
-      case "SUPERUSER":
-        router.push("/dashboard/superuser");
-        break;
-      case "PENGAWAS":
-        router.push("/dashboard/pengawas");
-        break;
-      case "MADRASAH":
-        router.push("/dashboard/madrasah");
-        break;
-      default:
-        router.push("/auth/signin");
-        break;
-    }
-  }, [router, userRole]);
+  switch (userRole) {
+    case "SUPERUSER":
+      redirect("/dashboard/superuser");
+      break;
+    case "PENGAWAS":
+      redirect("/dashboard/pengawas");
+      break;
+    case "MADRASAH":
+      redirect("/dashboard/madrasah");
+      break;
+    default:
+      redirect("/auth/signin");
+      break;
+  }
 
   return null;
 }

@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  seed     = "prisma/seed.ts"
 }
 
 datasource db {
@@ -91,17 +92,17 @@ model Madrasah {
   MadrasahOperatorId  Int?      @unique @map("madrasah_operator_id")
   npsn                String    @unique
   name                String
-  category            String
-  madrasahStatus      String    @map("madrasah_status")
-  accreditationStatus String    @map("accreditation_status")
-  accreditationYear   String    @map("accreditation_year")
-  address             String
-  email               String    @unique
-  phone               String
-  province            String
-  city                String
-  district            String
-  village             String
+  category            String?
+  madrasahStatus      String?    @map("madrasah_status")
+  accreditationStatus String?    @map("accreditation_status")
+  accreditationYear   String?    @map("accreditation_year")
+  address             String?
+  email               String?    @unique
+  phone               String?
+  province            String?
+  city                String?
+  district            String?
+  village             String?
   createdAt           DateTime? @default(now()) @map("created_at")
   updatedAt           DateTime? @default(now()) @updatedAt @map("updated_at")
 
@@ -172,7 +173,10 @@ model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
   fullName  String?   @map("full_name")
+  pangkat   String?   @map("pangkat")
+  jabatan   String?   @map("jabatan")
   role      UserRole
+  firstPassword  String @map("first_password")
   password  String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")

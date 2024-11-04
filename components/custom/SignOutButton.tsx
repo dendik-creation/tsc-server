@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
 import axios from "axios";
-import { toast } from "sonner";
+import { toastError, toastInfo } from "./PushToast";
 
 export default function SignOutButton() {
   const [open, setOpen] = useState<boolean>(false);
@@ -23,10 +23,12 @@ export default function SignOutButton() {
     axios
       .post("/api/auth/signout")
       .then(() => {
+        setOpen(false);
+        toastInfo("Berhasil Sign Out");
         window.location.reload();
       })
       .catch(() => {
-        toast.error("Gagal Sign Out");
+        toastError("Gagal Sign Out");
       })
       .finally(() => {
         setLoading(false);

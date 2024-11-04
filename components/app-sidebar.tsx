@@ -13,7 +13,7 @@ import Link from "next/link";
 import { userNavs } from "./partials/userNavs";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUserSession } from "@/services/auth/session";
+import { getUserSession } from "@/services/auth/service";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -31,8 +31,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent className="bg-gray-800">
-        <SidebarHeader className="font-bold mt-3 mx-2">
-          <div className="text-white">Tree Smart Coach</div>
+        <SidebarHeader className="font-bold mt-3 mx-3">
+          <div className="px-3 py-2 text-center border-slate-700 border-2 border-dashed rounded-md">
+            <span className="text-white" style={{ letterSpacing: "2px" }}>
+              Tree Smart Coach
+            </span>
+          </div>
         </SidebarHeader>
         <SidebarGroup>
           <SidebarGroupContent>

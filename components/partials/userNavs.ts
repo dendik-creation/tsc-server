@@ -25,14 +25,14 @@ const superUserNavs: NavItems = [
     icon: Grid2X2,
   },
   {
-    title: "Pengawas",
-    url: "/dashboard/superuser/data-pengawas",
-    icon: UserSearch,
-  },
-  {
     title: "Madrasah",
     url: "/dashboard/superuser/data-madrasah",
     icon: School,
+  },
+  {
+    title: "Pengawas",
+    url: "/dashboard/superuser/data-pengawas",
+    icon: UserSearch,
   },
   {
     title: "Persyaratan Dokumen",
