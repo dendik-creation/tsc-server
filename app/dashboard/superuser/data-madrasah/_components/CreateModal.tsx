@@ -9,25 +9,42 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { LoaderCircle, PencilIcon } from "lucide-react";
+import { BadgePlusIcon, LoaderCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { User } from "@prisma/client";
+import { Madrasah } from "@prisma/client";
 import { toastError, toastSuccess } from "@/components/custom/PushToast";
+import { Combobox, ComboboxOption } from "@/components/ui/combobox";
+import { determineMadrasahCategory } from "@/services/madrasah/service";
 
-const EditModal = ({
+const CreateModal = ({
   setActionDone,
-  selectedEdit,
+  pengawasOption,
 }: {
   setActionDone: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedEdit: User;
+  pengawasOption: ComboboxOption[];
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [data, setData] = useState<User>(selectedEdit);
+  const [data, setData] = useState<Madrasah>({} as Madrasah);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    if (name === "name") {
+      const madrasahCategory = (await determineMadrasahCategory(
+        value
+      )) as string;
+      setData((prev) => ({
+        ...prev,
+        name: value,
+        category: madrasahCategory || "",
+      }));
+    } else {
+      setData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleCombobox = (name: string, value: string | number | undefined) => {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -35,10 +52,7 @@ const EditModal = ({
     e.preventDefault();
     setSubmitting(true);
     try {
-      const response = await axios.put(
-        `/api/superuser/pengawas/update/${data.id}`,
-        data
-      );
+      const response = await axios.post("/api/superuser/madrasah/add", data);
       setOpen(!open);
       setActionDone(true);
       toastSuccess(response?.data?.message);
@@ -53,69 +67,79 @@ const EditModal = ({
     <>
       <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <DialogTrigger asChild>
-          <Button variant="blue" size="icon">
-            <PencilIcon />
+          <Button
+            variant="teal"
+            className="flex justify-start items-center gap-2"
+          >
+            <BadgePlusIcon />
+            <span>Baru</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Edit Data Pengawas</DialogTitle>
+            <DialogTitle>Data Madrasah Baru</DialogTitle>
             <DialogDescription asChild>
-              <div className="mt-3">
+              <div className="">
+                <p>
+                  Informasi penuh madrasah akan dilengkapi oleh masing-masing
+                  operator madrasah
+                </p>
+                <div className="mt-3"></div>
                 <form
                   onSubmit={handleSubmit}
                   className="grid grid-cols-2 gap-5"
                 >
                   <div className="">
-                    <p className="mb-1">NIP</p>
+                    <p className="mb-1">NPSN</p>
                     <Input
-                      name="username"
+                      name="npsn"
                       required
                       autoComplete="off"
-                      value={data.username as string}
+                      value={data.npsn ?? ("" as string)}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="">
-                    <p className="mb-1">Nama Lengkap</p>
+                    <p className="mb-1">Nama Madrasah</p>
                     <Input
-                      name="fullName"
+                      name="name"
                       required
                       autoComplete="off"
-                      value={data.fullName as string}
+                      value={data.name ?? ("" as string)}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="">
-                    <p className="mb-1">Pangkat</p>
+                    <p className="mb-1">Jenjang {"(Auto)"}</p>
                     <Input
-                      name="pangkat"
+                      name="category"
                       required
+                      readOnly={true}
                       autoComplete="off"
-                      value={data.pangkat ?? ("" as string)}
+                      value={data.category?.toUpperCase() ?? ("" as string)}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="">
-                    <p className="mb-1">Jabatan</p>
-                    <Input
-                      name="jabatan"
-                      required
-                      autoComplete="off"
-                      value={data.jabatan ?? ("" as string)}
-                      onChange={handleChange}
+                    <p className="mb-1">Pengawas</p>
+                    <Combobox
+                      inputName="pengawasId"
+                      inputValue={data.pengawasId as number}
+                      valueType="number"
+                      dataList={pengawasOption}
+                      setInputValue={handleCombobox}
                     />
                   </div>
                   <Button
                     disabled={submitting}
-                    variant="blue"
+                    variant="teal"
                     type="submit"
                     className="col-span-2"
                   >
                     {submitting ? (
                       <LoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Update"
+                      "Submit"
                     )}
                   </Button>
                 </form>
@@ -128,4 +152,4 @@ const EditModal = ({
   );
 };
 
-export default EditModal;
+export default CreateModal;

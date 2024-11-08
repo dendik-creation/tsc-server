@@ -57,11 +57,10 @@ model ChatRequest {
 }
 
 model DocumentReference {
-  id              Int       @id @default(autoincrement())
-  documentName    String    @map("document_name")
-  allowedFileType Json      @map("allowed_file_type")
-  createdAt       DateTime? @default(now()) @map("created_at")
-  updatedAt       DateTime? @default(now()) @updatedAt @map("updated_at")
+  id           Int       @id @default(autoincrement())
+  documentName String    @map("document_name")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at")
 
   madrasahDocument MadrasahDocument[] @relation("DocumentReference")
 }
@@ -87,31 +86,43 @@ model KepalaMadrasah {
 }
 
 model Madrasah {
-  id                  Int       @id @default(autoincrement())
-  pengawasId          Int?      @map("pengawas_id")
-  MadrasahOperatorId  Int?      @unique @map("madrasah_operator_id")
-  npsn                String    @unique
-  name                String
-  category            String?
-  madrasahStatus      String?    @map("madrasah_status")
-  accreditationStatus String?    @map("accreditation_status")
-  accreditationYear   String?    @map("accreditation_year")
-  address             String?
-  email               String?    @unique
-  phone               String?
-  province            String?
-  city                String?
-  district            String?
-  village             String?
+  id                 Int     @id @default(autoincrement())
+  pengawasId         Int?    @map("pengawas_id")
+  MadrasahOperatorId Int?    @unique @map("madrasah_operator_id")
+  npsn               String  @unique
+  name               String
+  category           String?
+  madrasahStatus     String? @map("madrasah_status")
+
+  address   String?
+  email     String?   @unique
+  phone     String?
+  province  String?
+  city      String?
+  district  String?
+  village   String?
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  pengawas         User?                   @relation("PengawasMadrasah", fields: [pengawasId], references: [id], onDelete: Cascade)
+  madrasahOperator User?                   @relation("MadrasahOperator", fields: [MadrasahOperatorId], references: [id], onDelete: Cascade)
+  kepalaMadrasah   KepalaMadrasah?         @relation("KepalaMadrasah")
+  madrasahDocuents MadrasahDocument[]      @relation("MadrasahDocuments")
+  staffGuru        StaffGuru[]             @relation("StaffGuru")
+  studentCount     StudentCount[]          @relation("StudentCount")
+  accreditation    AccreditationMadrasah[] @relation("AccreditationMadrasah")
+}
+
+model AccreditationMadrasah {
+  id Int @id @default(autoincrement())
+
+  madrasahId          Int?      @map("madrasah_id")
+  accreditationStatus String?   @map("accreditation_status")
+  accreditationYear   String?   @map("accreditation_year")
   createdAt           DateTime? @default(now()) @map("created_at")
   updatedAt           DateTime? @default(now()) @updatedAt @map("updated_at")
 
-  pengawas         User?              @relation("PengawasMadrasah", fields: [pengawasId], references: [id], onDelete: Cascade)
-  madrasahOperator User?              @relation("MadrasahOperator", fields: [MadrasahOperatorId], references: [id], onDelete: Cascade)
-  kepalaMadrasah   KepalaMadrasah?    @relation("KepalaMadrasah")
-  madrasahDocuents MadrasahDocument[] @relation("MadrasahDocuments")
-  staffGuru        StaffGuru[]        @relation("StaffGuru")
-  studentCount     StudentCount[]     @relation("StudentCount")
+  madrasah Madrasah? @relation("AccreditationMadrasah", fields: [madrasahId], references: [id], onDelete: Cascade)
 }
 
 model MadrasahDocument {
@@ -170,16 +181,16 @@ model StudentCount {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  fullName  String?   @map("full_name")
-  pangkat   String?   @map("pangkat")
-  jabatan   String?   @map("jabatan")
-  role      UserRole
-  firstPassword  String @map("first_password")
-  password  String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  fullName      String?   @map("full_name")
+  pangkat       String?   @map("pangkat")
+  jabatan       String?   @map("jabatan")
+  role          UserRole
+  firstPassword String    @map("first_password")
+  password      String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at")
 
   pengawasMadrasah     Madrasah[]   @relation("PengawasMadrasah")
   madrasahOperator     Madrasah?    @relation("MadrasahOperator")

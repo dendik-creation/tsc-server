@@ -1,46 +1,36 @@
 import { NextResponse } from "next/server";
-import ExcelJS from "exceljs";
-import { db } from "@/lib/db";
+import { importMadrasah } from "@/services/madrasah/service";
 
 export async function POST(req: Request) {
-  const formData = await req.formData();
-  const file = formData.get("file") as File;
-
-  if (!file) {
-    return NextResponse.json({ error: "File is required" }, { status: 400 });
-  }
-
-  const buffer = await file.arrayBuffer();
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(Buffer.from(buffer));
-
-  const worksheet = workbook.worksheets[0];
-  const data = [];
-
-  worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-    if (rowNumber > 1) {
-      const rowData = {
-        pengawasId: row.getCell(1).value,
-        MadrasahOperatorId: row.getCell(2).value,
-        npsn: row.getCell(3).value,
-        name: row.getCell(4).value,
-      };
-      data.push(rowData);
-    }
-  });
-
   try {
-    await db.madrasah.createMany({
-      data,
-      skipDuplicates: true, // Option to skip duplicate entries
-    });
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const allowedFileTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
 
-    return NextResponse.json({ message: "Data imported successfully" });
+    if (!file) {
+      return NextResponse.json(
+        { error: "File harus disertakan" },
+        { status: 400 }
+      );
+    }
+
+    if (!allowedFileTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: "File harus berformat .xlsx" },
+        { status: 400 }
+      );
+    }
+
+    if (await importMadrasah(file)) {
+      return NextResponse.json({
+        message: "Madrasah & Operatornya berhasil dibuat",
+      });
+    }
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Failed to import data" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Gagal Import Data" }, { status: 500 });
   }
 }

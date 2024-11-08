@@ -15,6 +15,29 @@ export const getPengawasAll = async () => {
       pangkat: true,
       jabatan: true,
       role: true,
+      pengawasMadrasah: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+};
+
+export const getPengawasSingle = async (id?: number, nip?: string) => {
+  return await db.user.findUnique({
+    where: {
+      id: id ?? undefined,
+      username: nip ?? undefined,
+    },
+    select: {
+      id: true,
+      username: true,
+      fullName: true,
+      pangkat: true,
+      jabatan: true,
+      role: true,
     },
   });
 };
@@ -35,7 +58,12 @@ export const updatePengawas = async (id: number, data: User) => {
     where: {
       id,
     },
-    data,
+    data: {
+      username: data.username,
+      fullName: data.fullName,
+      pangkat: data.pangkat,
+      jabatan: data.jabatan,
+    },
   });
 };
 

@@ -9,10 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, FileUp, LoaderCircle } from "lucide-react";
+import { Download, FileUp, LoaderCircle, UploadIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { toastError, toastSuccess } from "@/components/custom/PushToast";
+import {
+  toastError,
+  toastSuccess,
+  toastWarning,
+} from "@/components/custom/PushToast";
 
 const ImportModal = ({
   setActionDone,
@@ -31,10 +35,18 @@ const ImportModal = ({
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       ) {
         toastError("File harus berformat .xlsx");
-        return;
       }
       setFile(file);
     }
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (uploading && open !== newOpen) {
+      toastWarning("Tunggu proses import selesai...");
+      return;
+    }
+
+    setOpen(newOpen);
   };
 
   const handleDownload = () => {
@@ -66,7 +78,7 @@ const ImportModal = ({
   };
   return (
     <>
-      <Dialog onOpenChange={() => setOpen(!open)} open={open}>
+      <Dialog onOpenChange={handleOpenChange} open={open}>
         <DialogTrigger asChild>
           <Button
             variant="yellow"
@@ -76,48 +88,50 @@ const ImportModal = ({
             <span>Import</span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Import Data Pengawas</DialogTitle>
             <DialogDescription asChild>
               <div className="mt-2">
-                <div className="flex justify-between items-center gap-4">
-                  <div className="">
-                    <p className="mb-1">Import File (xlsx)</p>
-                    <form onSubmit={handleSubmit}>
-                      <Input
-                        id="pengawas_import_file"
-                        required
-                        className="mb-3"
-                        type="file"
-                        onChange={handleChangeFile}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                      />
+                <div className="">
+                  <p className="mb-1">Import File (xlsx)</p>
+                  <form onSubmit={handleSubmit}>
+                    <Input
+                      id="pengawas_import_file"
+                      required
+                      className="mb-3"
+                      type="file"
+                      onChange={handleChangeFile}
+                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    />
+                    <div className="grid grid-cols-3 gap-4">
                       <Button
                         disabled={uploading}
                         type="submit"
                         variant="yellow"
-                        className="w-full"
+                        className="w-full col-span-2"
                       >
                         {uploading ? (
                           <LoaderCircle className="animate-spin" />
                         ) : (
-                          <span>Import</span>
+                          <div className="flex justify-start items-center gap-2">
+                            <UploadIcon />
+                            <span>Import</span>
+                          </div>
                         )}
                       </Button>
-                    </form>
-                  </div>
-                  <div className="">
-                    <p className="mb-2">Contoh Format File (xlsx)</p>
-                    <Button
-                      variant="blue"
-                      className="flex justify-center w-full items-center gap-2"
-                      onClick={handleDownload}
-                    >
-                      <Download />
-                      <span>Download</span>
-                    </Button>
-                  </div>
+                      <Button
+                        variant="blue"
+                        type="button"
+                        disabled={uploading}
+                        className="flex justify-center w-full items-center gap-2 col-span-1"
+                        onClick={handleDownload}
+                      >
+                        <Download />
+                        <span>Download format file</span>
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </DialogDescription>
