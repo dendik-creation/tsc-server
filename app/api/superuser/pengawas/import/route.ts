@@ -7,8 +7,23 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
+    const allowedFileTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
+
     if (!file) {
-      return NextResponse.json({ error: "File is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "File harus disertakan" },
+        { status: 400 }
+      );
+    }
+
+    if (!allowedFileTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: "File harus berformat .xlsx" },
+        { status: 400 }
+      );
     }
 
     const pengawasData = await importPengawas(file);

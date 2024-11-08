@@ -49,7 +49,10 @@ export function AppSidebar() {
                   key={item.title}
                 >
                   <SidebarMenuButton
-                    isActive={pathname == item.url}
+                    isActive={
+                      pathname == item.url ||
+                      pathname.includes(item.url.split("/")[3])
+                    }
                     className="transition-all"
                     asChild
                   >

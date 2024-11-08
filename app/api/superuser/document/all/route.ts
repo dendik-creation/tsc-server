@@ -1,9 +1,9 @@
-import { getMadrasahAll } from "@/services/madrasah/service";
+import { getDocumentAll } from "@/services/document/service";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await getMadrasahAll();
+    const response = await getDocumentAll();
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error(error);

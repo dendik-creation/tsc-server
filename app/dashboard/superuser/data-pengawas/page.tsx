@@ -7,7 +7,7 @@ import { FileDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ImportModal from "./_components/ImportModal";
 import { pengawasColumnsDataTable } from "@/types/tableColumns";
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import CreateModal from "./_components/CreateModal";
 import EditModal from "./_components/EditModal";
 import { DeleteModal } from "@/components/custom/DeleteModal";
@@ -15,7 +15,9 @@ import { DeleteModal } from "@/components/custom/DeleteModal";
 export default function DataMadrasah() {
   const [fetching, setFetching] = useState<boolean>(false);
   const [actionDone, setActionDone] = useState<boolean>(false);
-  const [data, setData] = useState<User[]>([]);
+  const [data, setData] = useState<
+    Prisma.UserGetPayload<{ include: { pengawasMadrasah: true } }>[]
+  >([]);
 
   useEffect(() => {
     fetchPengawas();
@@ -23,8 +25,10 @@ export default function DataMadrasah() {
 
   useEffect(() => {
     if (actionDone) {
-      fetchPengawas();
-      setActionDone(false);
+      setTimeout(() => {
+        fetchPengawas();
+        setActionDone(false);
+      }, 1000);
     }
   }, [actionDone]);
 
