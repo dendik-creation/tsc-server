@@ -32,10 +32,10 @@ export const DeleteModal = ({
     setDeleting(true);
     axios
       .delete(targetUrl)
-      .then(() => {
+      .then((res) => {
         setOpen(false);
         setActionDone(true);
-        toastSuccess("Berhasil Hapus Data");
+        toastSuccess(res?.data?.message ?? "Berhasil Hapus Data");
       })
       .catch(() => {
         toastError("Gagal Hapus Data");

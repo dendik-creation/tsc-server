@@ -11,6 +11,12 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const KelengkapanDokumen = ({
   documents,
   documentReferences,
@@ -21,30 +27,51 @@ const KelengkapanDokumen = ({
   fetching: boolean;
 }) => {
   const MakePoint: React.FC<{
-    value: MadrasahDocument | boolean;
+    value: MadrasahDocument;
     label: string;
     className?: string;
   }> = ({ value, label, className }) => {
     return (
       <div
         className={cn(
-          "w-3/4 my-1 p-2 flex justify-start border gap-5 items-center rounded-md z-10",
+          "w-full my-1 p-2 flex justify-start border relative items-center rounded-md z-10",
           className,
-          (value as boolean)
-            ? "bg-blue-50 border-blue-100"
-            : "bg-red-50 border-red-100"
+          value ? "bg-blue-50 border-blue-100" : "bg-red-50 border-red-100"
         )}
       >
-        <p className={cn("break-words", value && "line-through opacity-60")}>
+        <p
+          className={cn(
+            "break-words text-sm",
+            value && "line-through opacity-60"
+          )}
+        >
           {label}
         </p>
         {value ? (
-          <ExternalLinkIcon
-            size={18}
-            className="text-blue-600 cursor-pointer"
-          />
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <ExternalLinkIcon
+                onClick={() => window.open(value.documentUrl, "_blank")}
+                size={18}
+                className="text-blue-600 cursor-pointer absolute z-20 right-4"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Lihat Dokumen</p>
+            </TooltipContent>
+          </Tooltip>
         ) : (
-          <FileWarningIcon size={18} className="text-red-600" />
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <FileWarningIcon
+                size={18}
+                className="text-red-600 cursor-pointer absolute z-20 right-4"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Dokumen belum dilengkapi madrasah</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     );
@@ -75,9 +102,9 @@ const KelengkapanDokumen = ({
             <FileCheck2Icon
               width={!isMobile ? 200 : 110}
               height={!isMobile ? 200 : 110}
-              className="absolute z-0 text-muted -bottom-8 -right-10"
+              className="absolute z-0 text-muted -bottom-12 -right-8"
             />
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {documentReferences.map((documentRef, idx) => (
                 <MakePoint
                   label={documentRef.documentName}
