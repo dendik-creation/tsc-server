@@ -1,4 +1,4 @@
-import { DocumentReference, Prisma } from "@prisma/client";
+import { DocumentKebijakan, DocumentReference, Prisma } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const pengawasColumnsDataTable: ColumnDef<
@@ -87,5 +87,23 @@ export const documentReferenceColumnsDataTable: ColumnDef<DocumentReference>[] =
       accessorKey: "documentName",
       header: "Nama Dokumen",
       accessorFn: (row) => row.documentName ?? "-",
+    },
+  ];
+
+export const documentKebijakanColumnsDataTable: ColumnDef<DocumentKebijakan>[] =
+  [
+    {
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
+      accessorKey: "documentName",
+      header: "Nama Dokumen",
+      accessorFn: (row) => row.documentName ?? "-",
+    },
+    {
+      accessorKey: "documentUrl",
+      header: "URL Dokumen",
+      accessorFn: (row) => row.documentUrl ?? "-",
     },
   ];
