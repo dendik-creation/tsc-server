@@ -6,13 +6,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { UserCog2Icon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ResetPasswordModal } from "@/components/custom/ResetPasswordModal";
 
 const AksesOperator = ({
   operator,
   fetching,
+  setActionDone,
 }: {
   operator: User;
   fetching: boolean;
+  setActionDone: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const MakePoint: React.FC<{
     value: string;
@@ -45,8 +48,14 @@ const AksesOperator = ({
         </Card>
       ) : (
         <Card className="w-full relative overflow-hidden">
-          <CardHeader>
+          <CardHeader className="flex flex-row justify-between items-center">
             <h3 className="font-semibold text-xl">Akses Operator</h3>
+            <ResetPasswordModal
+              targetUrl={`/api/superuser/madrasah/reset-password-operator/${operator?.id}`}
+              title="Reset Password Operator"
+              description="Apakah anda yakin ingin mereset password operator ini?"
+              setActionDone={setActionDone}
+            />
           </CardHeader>
           <CardContent>
             <UserCog2Icon
