@@ -11,6 +11,7 @@ import { Prisma, User } from "@prisma/client";
 import CreateModal from "./_components/CreateModal";
 import EditModal from "./_components/EditModal";
 import { DeleteModal } from "@/components/custom/DeleteModal";
+import { ResetPasswordModal } from "@/components/custom/ResetPasswordModal";
 
 export default function DataMadrasah() {
   const [fetching, setFetching] = useState<boolean>(false);
@@ -67,6 +68,12 @@ export default function DataMadrasah() {
       <>
         <div className="flex items-center justify-start gap-3">
           <EditModal selectedEdit={row} setActionDone={setActionDone} />
+          <ResetPasswordModal
+            title="Reset Password Pengawas"
+            description="Apakah anda yakin ingin mereset password pengawas ini?"
+            setActionDone={setActionDone}
+            targetUrl={`/api/superuser/pengawas/reset-password/${row.id}`}
+          />
           <DeleteModal
             setActionDone={setActionDone}
             targetUrl={`/api/superuser/pengawas/delete/${row.id}`}

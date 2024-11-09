@@ -21,6 +21,7 @@ import JumlahSiswa from "./_components/JumlahSiswa";
 export default function MadrasahDetail({ params }: { params: { id: string } }) {
   const { id } = params;
   const [fetching, setFetching] = useState<boolean>(false);
+  const [actionDone, setActionDone] = useState<boolean>(false);
   const [documentReferences, setDocumentReferences] = useState<
     DocumentReference[]
   >([]);
@@ -55,6 +56,22 @@ export default function MadrasahDetail({ params }: { params: { id: string } }) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (actionDone) {
+      const fetchData = async () => {
+        setFetching(true);
+        await fetchMadrasah();
+        await fetchDocumentReference();
+        setFetching(false);
+        setActionDone(false);
+      };
+      setTimeout(() => {
+        fetchData();
+      }, 1000);
+    }
+  }, [actionDone]);
+
   useEffect(() => {
     const fetchData = async () => {
       setFetching(true);
@@ -95,6 +112,7 @@ export default function MadrasahDetail({ params }: { params: { id: string } }) {
         <AksesOperator
           operator={madrasah?.madrasahOperator as User}
           fetching={fetching}
+          setActionDone={setActionDone}
         />
         <JumlahSiswa
           studentCounts={madrasah?.studentCount as StudentCount[]}
