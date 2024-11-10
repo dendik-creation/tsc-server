@@ -43,6 +43,7 @@ export async function GET(request: Request) {
       { status: 400 }
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 }
