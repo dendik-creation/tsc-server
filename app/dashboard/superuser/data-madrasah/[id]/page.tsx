@@ -70,6 +70,7 @@ export default function MadrasahDetail({ params }: { params: { id: string } }) {
         fetchData();
       }, 1000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionDone]);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function MadrasahDetail({ params }: { params: { id: string } }) {
       setFetching(false);
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>
