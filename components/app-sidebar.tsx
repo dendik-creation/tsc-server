@@ -10,10 +10,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { userNavs } from "./partials/userNavs";
+import { NavItems, userNavs } from "./partials/userNavs";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUserSession } from "@/services/auth/service";
+
+export let globalNavs: NavItems = [];
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -28,6 +30,7 @@ export function AppSidebar() {
     getUserRole();
   }, []);
   const items = userNavs(userRole);
+  globalNavs = items;
   return (
     <Sidebar>
       <SidebarContent className="bg-gray-800">
