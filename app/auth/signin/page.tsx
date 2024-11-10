@@ -1,8 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoaderCircle, LockIcon, LogIn, UserIcon } from "lucide-react";
-import React, { ChangeEvent, useState } from "react";
+import {
+  BlocksIcon,
+  LoaderCircle,
+  LockIcon,
+  LogIn,
+  UserIcon,
+} from "lucide-react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { toastError } from "@/components/custom/PushToast";
 import Image from "next/image";
@@ -14,16 +20,21 @@ type Credentials = {
 
 export default function SignIn() {
   const [onSubmit, setSubmit] = useState<boolean>(false);
+  const [successAuth, setSuccessAuth] = useState<boolean>(false);
   const [credentials, setCredential] = useState<Credentials>({
     username: "",
     password: "",
   });
+  useEffect(() => {
+    document.title = "Sign in | TSC";
+  }, []);
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmit(true);
     await axios
       .post("/api/auth/signin", credentials)
       .then(() => {
+        setSuccessAuth(true);
         window.location.reload();
       })
       .catch((err) => {
@@ -42,17 +53,16 @@ export default function SignIn() {
       <>
         <div className="flex h-screen w-screen bg-slate-100 overflow-hidden flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
           <div className="bg-white relative overflow-hidden flex items-center justify-center lg:justify-between lg:max-w-4xl w-fit px-6 py-5 rounded-md">
-            <div className="lg:block hidden">
+            <div className="lg:block hidden ms-6">
               <Image
-                src="/svg/sign-in.svg"
+                src="/icon/base_icon.png"
                 alt="logo"
-                className="scale-[1.5]"
-                width={450}
-                height={450}
+                width={300}
+                height={300}
                 priority={true}
               />
             </div>
-            <div className="mx-16 lg:my-8 my-8">
+            <div className="md:px-16 lg:px-0 lg:mx-16 lg:my-8 my-8">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <LogIn className="mx-auto h-20 w-auto text-blue-600" />
                 <h2 className="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -122,13 +132,26 @@ export default function SignIn() {
                   <div>
                     <Button
                       type="submit"
-                      disabled={onSubmit}
+                      disabled={onSubmit || successAuth}
                       className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                      {onSubmit ? (
+                      {successAuth ? (
+                        <div
+                          className="flex gap-2 items-center"
+                          style={{
+                            animation: "pulse 0.8s ease-in-out infinite",
+                          }}
+                        >
+                          <BlocksIcon size={48} />
+                          <span>Menyiapkan</span>
+                        </div>
+                      ) : onSubmit ? (
                         <LoaderCircle className="animate-spin" size={48} />
                       ) : (
-                        "Masuk"
+                        <div className="flex gap-2 items-center">
+                          <LogIn size={48} />
+                          <span>Masuk</span>
+                        </div>
                       )}
                     </Button>
                   </div>

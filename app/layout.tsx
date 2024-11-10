@@ -6,6 +6,9 @@ import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "Tree Smart Coach",
   description: "Tree Smart Coach DESC",
+  icons: {
+    icon: "/icon/base_icon.png",
+  },
 };
 const outputSans = localFont({
   src: "./fonts/OutputSans_Regular.ttf",
@@ -19,6 +22,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="shortcut icon"
+          href="/icon/base_icon.png"
+          type="image/x-icon"
+        />
+      </head>
       <body className={`antialiased ${outputSans.className}`}>
         <main>
           {children}

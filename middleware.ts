@@ -10,14 +10,22 @@ export function middleware(request: NextRequest) {
     !token &&
     protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
   ) {
-    return NextResponse.redirect(new URL("/auth/signin", request.url));
+    const response = NextResponse.redirect(
+      new URL("/auth/signin", request.url)
+    );
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   }
 
   if (token && request.nextUrl.pathname.startsWith("/auth/signin")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const response = NextResponse.redirect(new URL("/dashboard", request.url));
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("Cache-Control", "no-store");
+  return response;
 }
 
 export const config = {
