@@ -41,6 +41,7 @@ const CreateModal = ({
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckPublicDocUrl = useCallback(
     debounce(async (url) => {
       if (!url) {
