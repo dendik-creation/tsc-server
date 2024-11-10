@@ -4,6 +4,7 @@ import { PageTitle } from "@/components/partials/PageTitle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -32,8 +33,9 @@ export default function DashboardSuperUser() {
                 </CardHeader>
                 <CardContent>
                   <Link className="z-10" href={item.url}>
-                    <Button className="bg-gray-800 w-full">
-                      Lihat Halaman
+                    <Button className="bg-gray-800 flex items-center group transition-all gap-1 w-full">
+                      <span>Lihat Halaman</span>
+                      <ChevronRightIcon className="group-hover:translate-x-2 transition-all" />
                     </Button>
                   </Link>
                   <div className="absolute -bottom-5 -right-3">

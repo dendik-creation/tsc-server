@@ -10,7 +10,7 @@ async function main() {
   await prisma.user.createMany({
     data: [
       {
-        username: "orangsigma",
+        username: "superuser1",
         fullName: "Super User 1",
         role: "SUPERUSER",
         firstPassword: "12345",
