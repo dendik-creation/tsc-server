@@ -6,7 +6,13 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-primary/10", className)}
+      className={cn(
+        "bg-primary/10 rounded-md animate-[pulse_2s_ease-in-out_infinite]",
+        className
+      )}
+      style={{
+        animation: "pulse 0.8s ease-in-out infinite",
+      }}
       {...props}
     />
   );

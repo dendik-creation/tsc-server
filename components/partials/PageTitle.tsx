@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 import { ChevronLeftIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,8 +12,10 @@ export const PageTitle = ({
   title: string;
   description: string;
 }) => {
+  useEffect(() => {
+    document.title = `${title} | TSC`;
+  }, [title]);
   const pathname = usePathname();
-
   const router = useRouter();
   return (
     <>

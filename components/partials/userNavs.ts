@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
-type NavItems = {
+export type NavItems = {
   title: string;
   url: string;
   icon: ForwardRefExoticComponent<
