@@ -10,27 +10,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { NavItems, userNavs } from "./partials/userNavs";
+import { userNavs } from "./partials/userNavs";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getUserSession } from "@/services/auth/service";
-
-export let globalNavs: NavItems = [];
+import { useUserSession } from "@/context/UserSessionProvider";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const [userRole, setUserRole] = useState<string>("");
-
-  useEffect(() => {
-    const getUserRole = async () => {
-      const userData = await getUserSession();
-      setUserRole(userData?.userRole || "");
-    };
-
-    getUserRole();
-  }, []);
-  const items = userNavs(userRole);
-  globalNavs = items;
+  const { userSession } = useUserSession();
+  const items = userNavs(userSession?.userRole as string);
   return (
     <Sidebar>
       <SidebarContent className="bg-gray-800">

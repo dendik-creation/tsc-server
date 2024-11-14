@@ -1,23 +1,14 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getUserSession } from "@/services/auth/service";
+import { useUserSession } from "@/context/UserSessionProvider";
 
-export default function DashboardIndex() {
+export default function DashboardPage() {
+  const { userSession } = useUserSession();
   const router = useRouter();
-  const [userRole, setUserRole] = useState<string>("");
 
   useEffect(() => {
-    const getUserRole = async () => {
-      const userData = await getUserSession();
-      setUserRole(userData?.userRole || "");
-    };
-    getUserRole();
-  }, []);
-
-  useEffect(() => {
-    switch (userRole) {
+    switch (userSession?.userRole as string) {
       case "SUPERUSER":
         router.push("/dashboard/superuser");
         break;
@@ -31,7 +22,7 @@ export default function DashboardIndex() {
         router.push("/auth/signin");
         break;
     }
-  }, [router, userRole]);
+  }, [router, userSession]);
 
   return null;
 }

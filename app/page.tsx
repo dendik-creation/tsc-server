@@ -1,25 +1,28 @@
-import { redirect } from "next/navigation";
-import { getUserSession } from "@/services/auth/service";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUserSession } from "@/context/UserSessionProvider";
 
-export default async function IndexPage() {
-  const userData = await getUserSession();
+export default function IndexPage() {
+  const { userSession } = useUserSession();
+  const router = useRouter();
 
-  const userRole = userData?.userRole || "";
-
-  switch (userRole) {
-    case "SUPERUSER":
-      redirect("/dashboard/superuser");
-      break;
-    case "PENGAWAS":
-      redirect("/dashboard/pengawas");
-      break;
-    case "MADRASAH":
-      redirect("/dashboard/madrasah");
-      break;
-    default:
-      redirect("/auth/signin");
-      break;
-  }
+  useEffect(() => {
+    switch (userSession?.userRole as string) {
+      case "SUPERUSER":
+        router.push("/dashboard/superuser");
+        break;
+      case "PENGAWAS":
+        router.push("/dashboard/pengawas");
+        break;
+      case "MADRASAH":
+        router.push("/dashboard/madrasah");
+        break;
+      default:
+        router.push("/auth/signin");
+        break;
+    }
+  }, [router, userSession]);
 
   return null;
 }

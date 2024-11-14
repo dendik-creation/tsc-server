@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
 
     const userPayload = {
       userId: user.id,
+      userName: user.username,
       userRole: user.role,
+      fullName: user.fullName,
     };
 
     const userSession = jwt.sign(userPayload, process.env.JWT_SECRET!, {

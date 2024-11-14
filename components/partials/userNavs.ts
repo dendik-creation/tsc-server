@@ -1,6 +1,7 @@
 import {
   Contact,
   FileCheck2,
+  GraduationCapIcon,
   Grid2X2,
   LucideProps,
   MessagesSquare,
@@ -86,14 +87,19 @@ const madrasahNavs: NavItems = [
     icon: Contact,
   },
   {
-    title: "Chat",
-    url: "/dashboard/madrasah/chat",
-    icon: MessagesSquare,
+    title: "Jumlah Siswa",
+    url: "/dashboard/madrasah/data-siswa",
+    icon: GraduationCapIcon,
   },
   {
     title: "Kebijakan",
     url: "/dashboard/madrasah/data-kebijakan",
     icon: Siren,
+  },
+  {
+    title: "Chat",
+    url: "/dashboard/madrasah/chat",
+    icon: MessagesSquare,
   },
 ];
 export const userNavs = (userRole: string) => {
