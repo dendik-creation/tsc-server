@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
+import { UserSessionProvider } from "@/context/UserSessionProvider";
 
 export const metadata: Metadata = {
   title: "Tree Smart Coach",
@@ -31,8 +32,10 @@ export default function RootLayout({
       </head>
       <body className={`antialiased ${outputSans.className}`}>
         <main>
-          {children}
-          <Toaster />
+          <UserSessionProvider>
+            {children}
+            <Toaster />
+          </UserSessionProvider>
         </main>
       </body>
     </html>

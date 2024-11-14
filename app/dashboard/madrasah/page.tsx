@@ -9,7 +9,7 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function DashboardSuperUser() {
+export default function DashboardMadrasah() {
   const [fecthing, setFetching] = useState<boolean>(false);
   const { userSession } = useUserSession();
   const [userNav, setUserNav] = useState<NavItems>([]);
@@ -26,10 +26,10 @@ export default function DashboardSuperUser() {
       <div className="flex justify-between w-full flex-row md:flex-col mb-6">
         <PageTitle
           title="Dashboard"
-          description="Pantau statistik data yang telah diolah sistem"
+          description={`Selamat Datang, ${userSession?.fullName}`}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {!fecthing && userNav
           ? userNav.slice(1).map((item, idx) => (
               <Card className="relative overflow-hidden" key={idx}>
@@ -43,7 +43,7 @@ export default function DashboardSuperUser() {
                       <ChevronRightIcon className="group-hover:translate-x-2 transition-all" />
                     </Button>
                   </Link>
-                  <div className="absolute -bottom-5 -right-3">
+                  <div className="absolute -bottom-7 -right-3">
                     <item.icon
                       className="text-gray-800 opacity-30"
                       size={128}
@@ -52,7 +52,7 @@ export default function DashboardSuperUser() {
                 </CardContent>
               </Card>
             ))
-          : Array.from({ length: 4 }).map((_, idx) => (
+          : Array.from({ length: 5 }).map((_, idx) => (
               <Card key={idx}>
                 <CardHeader>
                   <Skeleton className="w-1/3 h-4" />

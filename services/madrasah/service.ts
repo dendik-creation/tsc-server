@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Madrasah, User } from "@prisma/client";
+import { KepalaMadrasah, Madrasah, User } from "@prisma/client";
 import ExcelJS from "exceljs";
 import bcrypt from "bcryptjs";
 import { generateRandomString } from "../other";
@@ -13,13 +13,37 @@ export const getMadrasahAll = async () => {
   });
 };
 
-export const getMadrasahDetail = async (id: number) => {
+export const getMadrasahAndKepala = async (npsn: string) => {
+  const madrasah = await db.madrasah.findUnique({
+    where: {
+      npsn,
+    },
+  });
+  const kepalaMadrasah = await db.kepalaMadrasah.findUnique({
+    where: {
+      madrasahId: madrasah?.id,
+    },
+  });
+  return { madrasah, kepalaMadrasah };
+};
+
+export const getMadrasahDetail = async (id?: number, npsn?: string) => {
   return await db.madrasah.findUnique({
     where: {
-      id,
+      id: id ?? undefined,
+      npsn: npsn ?? undefined,
     },
     include: {
-      pengawas: true,
+      pengawas: {
+        select: {
+          id: true,
+          username: true,
+          fullName: true,
+          pangkat: true,
+          jabatan: true,
+          role: true,
+        },
+      },
       staffGuru: true,
       studentCount: {
         orderBy: {
@@ -27,7 +51,14 @@ export const getMadrasahDetail = async (id: number) => {
         },
       },
       kepalaMadrasah: true,
-      madrasahOperator: true,
+      madrasahOperator: {
+        select: {
+          id: true,
+          username: true,
+          fullName: true,
+          role: true,
+        },
+      },
       madrasahDocuents: true,
       accreditation: {
         orderBy: {
@@ -67,6 +98,27 @@ export const createMadrasah = async (data: Madrasah[] | Madrasah) => {
   });
 };
 
+export const updateMadrasahByOperator = async (id: number, data: Madrasah) => {
+  return await db.madrasah.update({
+    where: {
+      id,
+    },
+    data: {
+      npsn: data.npsn,
+      name: data.name,
+      category: data.category,
+      madrasahStatus: data.madrasahStatus,
+      email: data.email,
+      phone: data.phone,
+      province: data.province,
+      city: data.city,
+      district: data.district,
+      village: data.village,
+      address: data.address,
+    },
+  });
+};
+
 export const updateMadrasah = async (id: number, data: Madrasah) => {
   return await db.madrasah.update({
     where: {
@@ -79,6 +131,30 @@ export const updateMadrasah = async (id: number, data: Madrasah) => {
       pengawasId: data.pengawasId,
     },
   });
+};
+
+export const upsertMadrasah = async (
+  madrasahId: number,
+  data: KepalaMadrasah
+) => {
+  const existingMadrasah = await db.kepalaMadrasah.findUnique({
+    where: {
+      madrasahId,
+    },
+  });
+
+  if (existingMadrasah) {
+    return await db.kepalaMadrasah.update({
+      where: {
+        madrasahId,
+      },
+      data,
+    });
+  } else {
+    return await db.kepalaMadrasah.create({
+      data,
+    });
+  }
 };
 
 export const deleteMadrasah = async (npsn: string) => {
